@@ -2,7 +2,7 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Timport { Toaster } from "./components/ui/toaster";
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Navbar } from "@/components/Navbar";
 
@@ -15,29 +15,22 @@ import FavoritesPage from "@/pages/FavoritesPage";
 import RoutePage from "@/pages/RoutePage";
 import WelcomePage from "@/pages/WelcomePage";
 
-// ✅ BLOG
+// BLOG
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 
 function Router() {
   return (
     <Switch>
-      {/* ✅ Welcome теперь стартовая */}
       <Route path="/" component={WelcomePage} />
-
-      {/* ✅ Blog (доступен всем) */}
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogPostPage} />
-
-      {/* ✅ Карта */}
       <Route path="/map" component={Home} />
-
       <Route path="/auth" component={AuthPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/favorites" component={FavoritesPage} />
       <Route path="/route" component={RoutePage} />
       <Route path="/place/:id" component={PlacePage} />
-
       <Route component={NotFound} />
     </Switch>
   );
