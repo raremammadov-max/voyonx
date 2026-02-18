@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@shared/routes";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,6 +14,9 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// ✅ локальный ключ вместо @shared/routes (чтобы не тянуть shared + zod в клиент)
+const ME_QUERY_KEY = "users.me";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -39,11 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
-    queryKey: [api.users.me.path, session?.user?.id ?? null],
+    queryKey: [ME_QUERY_KEY, session?.user?.id ?? null],
     queryFn: async () => {
       if (!session?.user) return null;
 
-      // ВАЖНО: maybeSingle вместо single → не будет 406 если профиля нет
+      // maybeSingle вместо single → не будет 406 если профиля нет
       const { data, error } = await supabase
         .from("users")
         .select("*")
@@ -55,11 +57,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      // data может быть null — это нормально
       return data ?? null;
     },
     enabled: !!session?.user,
-    retry: 0, // чтобы не долбило запросами и не спамило ошибками
+    retry: 0,
   });
 
   const signOut = async () => {
