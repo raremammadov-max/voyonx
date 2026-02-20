@@ -5,7 +5,6 @@ const config: CapacitorConfig = {
   appId: "com.voyonx.app",
   appName: "Voyonx",
   webDir: "dist",
-  bundledWebRuntime: false,
   server: {
     androidScheme: "https",
   },
